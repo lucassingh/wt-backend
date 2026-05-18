@@ -1,0 +1,60 @@
+services:
+  - type: web
+    name: weight-tracker-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # ── Database (auto-filled from the managed DB below) ──────────────────────
+      - key: DB_HOST
+        fromDatabase:
+          name: weight-tracker-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: weight-tracker-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: weight-tracker-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: weight-tracker-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: weight-tracker-db
+          property: database
+      - key: DB_SSL
+        value: true
+
+      # ── Schema sync ───────────────────────────────────────────────────────────
+      # Set to true for the FIRST deploy so TypeORM creates all tables.
+      # Change to false in the Render dashboard after the first successful deploy.
+      - key: DB_SYNC
+        value: true
+
+      # ── Auth ──────────────────────────────────────────────────────────────────
+      - key: JWT_SECRET
+        generateValue: true   # Render generates a random value automatically
+      - key: JWT_EXPIRES_IN
+        value: 7d
+
+      # ── CORS ─────────────────────────────────────────────────────────────────
+      # Set this manually in the Render dashboard once you know your Vercel URL.
+      # Example: https://weight-tracker.vercel.app
+      # Multiple origins: https://weight-tracker.vercel.app,https://custom-domain.com
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+databases:
+  - name: weight-tracker-db
+    databaseName: weight_tracker_db
+    plan: free
+    user: wt_user
