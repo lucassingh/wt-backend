@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { BmiModule } from './bmi/bmi.module';
+import { KeepAliveModule } from './keep-alive/keep-alive.module';
 import { SummaryModule } from './summary/summary.module';
 import { TmbModule } from './tmb/tmb.module';
 import { UserWeightModule } from './user-weight/user-weight.module';
@@ -12,6 +14,7 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -40,6 +43,7 @@ import { UsersModule } from './users/users.module';
     TmbModule,
     BmiModule,
     SummaryModule,
+    KeepAliveModule,
   ],
   controllers: [AppController],
 })
